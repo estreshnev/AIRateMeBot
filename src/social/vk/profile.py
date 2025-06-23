@@ -93,6 +93,11 @@ def _parse_age(bdate: str) -> Optional[int]:
     except Exception:
         return None
 
+def escape_markdown(text: str) -> str:
+    for ch in ('_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'):
+        text = text.replace(ch, f'\\{ch}')
+    return text
+
 class VKProfileProvider:
     async def get_profile(self, username: str) -> dict:
         async with httpx.AsyncClient() as client:

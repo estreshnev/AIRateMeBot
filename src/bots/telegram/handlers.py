@@ -62,12 +62,24 @@ async def handle_profile(message: Message, state: FSMContext):
             analyze_type = user_state.get("analyze_type", "main")
             generate_report = await get_generator(analyze_type)
             report = await generate_report(profile)
-            await message.answer(report)
+            await message.answer(report, parse_mode='Markdown')
+            await send_share_prompt(message, profile)
         except Exception as e:
             logging.exception("Ошибка при обработке VK-профиля")
             await message.answer("❌ Не удалось сгенерировать отчёт. Попробуй позже.")
     else:
         await message.answer("🤔 Не понял. Пришли корректную ссылку на VK (например, https://vk.com/id1).")
+
+async def send_share_prompt(message: Message, profile: dict):
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="📤 Поделиться отчётом",
+                switch_inline_query=f"Это мой AI-типаж: {profile.get('name', '')}"
+            )
+        ]
+    ])
+    await message.answer("Хочешь поделиться результатом?", reply_markup=keyboard)
 
 def register_handlers(dp):
     from .psy_handlers import psy_router

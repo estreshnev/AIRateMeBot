@@ -28,7 +28,7 @@ async def fallback_handler(message: Message, state: FSMContext):
         entity = await provider.get_entity(entity_id, "profile")
         ai_provider = AIFactory.get_provider("psych")
         report = await ai_provider.analyze(entity, "psych")
-        await message.answer(report)
+        await message.answer(report, parse_mode='Markdown')
     except Exception as e:
         logging.exception("Ошибка при психоанализе VK-профиля")
         await message.answer("❌ Произошла ошибка при анализе. Проверь ссылку и попробуй снова через /start. Если ошибка повторяется — попробуй позже или обратись к поддержке.") 
