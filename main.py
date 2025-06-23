@@ -9,7 +9,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.client.default import DefaultBotProperties
 
 from src.config import TELEGRAM_TOKEN
-from src.handlers import register_handlers
+from src.bots.telegram.handlers import register_handlers
 
 # Загрузка .env и настройка логов
 load_dotenv()

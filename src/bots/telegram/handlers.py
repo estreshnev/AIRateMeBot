@@ -1,4 +1,4 @@
-# src/handlers.py
+# src/bots/telegram/handlers.py
 import re
 import logging
 from aiogram import Router, F
@@ -6,20 +6,20 @@ from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, C
 from aiogram.fsm.context import FSMContext
 
 from src.config import MODEL_SOURCE
-from src.vk_parser import parse_vk_profile
+from src.social.vk import parse_vk_profile
 
 # Динамический импорт генератора отчёта
 async def get_generator(analyze_type: str):
     if analyze_type == "psy":
         if MODEL_SOURCE == "claude":
-            from src.claude_psych_profile import generate_report
+            from src.providers.claude_psych import generate_report
         else:
-            from src.psych_profile import generate_report
+            from src.providers.openai_psych import generate_report
     else:
         if MODEL_SOURCE == "claude":
-            from src.claude_report import generate_report
+            from src.providers.claude import generate_report
         else:
-            from src.ai_report import generate_report
+            from src.providers.openai import generate_report
     return generate_report
 
 router = Router()
@@ -70,4 +70,7 @@ async def handle_profile(message: Message, state: FSMContext):
         await message.answer("🤔 Не понял. Пришли корректную ссылку на VK (например, https://vk.com/id1).")
 
 def register_handlers(dp):
-    dp.include_router(router)
+    from .psy_handlers import psy_router
+    from .influencer_handlers import influencer_router
+    dp.include_router(psy_router)
+    dp.include_router(influencer_router)
